@@ -1,0 +1,21 @@
+@mixin commonEmphasis{
+  margin-left: 0.05rem;
+  color: #333;
+  font-weight: 700;
+}
+@mixin commonIncrease{
+  width: 0;
+  height: 0;
+  border-width: 0.06rem;
+  border-color: transparent transparent red transparent;
+  border-style: solid;
+  margin: 0 0 0.06rem 0.06rem;
+}
+@mixin commonDecrease{
+  width: 0;
+  height: 0;
+  border-width: 0.06rem;
+  border-color: green transparent transparent transparent;
+  border-style: solid;
+  margin: 0.06rem 0 0 0.06rem;
+}
