@@ -1,7 +1,7 @@
 <template>
   <el-card shadow="hover">
     <div class="topWrapper">
-      <div class="topWrapper__title">可视化系统</div>
+      <div class="topWrapper__title">可视化展示</div>
       <div class="topWrapper__funcBox">
         <div class="topWrapper__funcBox__buttons">
           <el-button type="text" class="topWrapper__funcBox__buttons__item">数据报表</el-button>

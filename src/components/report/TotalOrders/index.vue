@@ -1,23 +1,28 @@
 <template>
-  <common-card title="累计订单量" value="2,157,420">
+  <common-card title="累计订单量" :value="totalOrders_total">
     <template v-slot:chart>
       <div id="totalOrdersChart" :style="{width:'100%', height:'100%'}"></div>
     </template>
     <template v-slot:footer>
       <span>昨日订单量:</span>
-      <span class="emphasis">2,157,420</span>
+      <span class="emphasis">{{totalOrders_yesterdayTotal}}</span>
+      <!-- <span class="emphasis">{{orderTrend}}</span> -->
     </template>
   </common-card>
 </template>
 <script>
 import commonCardMixin from '../../../mixins/commonCardMixin'
+import commonDataMixin from '../../../mixins/commonDataMixin'
+import commonApiMixin from '../../../mixins/commonApiMixin'
+
 const echarts = require('echarts')
 export default {
-  mixins: [commonCardMixin],
+  mixins: [commonCardMixin, commonDataMixin, commonApiMixin],
   mounted () {
     const chartDom = echarts.init(
       document.getElementById('totalOrdersChart')
     )
+    // console.log(this.orderTrend)
     chartDom.setOption({
       xAxis: {
         type: 'category',
@@ -40,7 +45,7 @@ export default {
         itemStyle: {
           opacity: 0
         },
-        data: [620, 432, 220, 534, 790, 430, 220, 320, 532, 320, 834, 690, 530, 220, 620],
+        data: this.orderTrend,
         areaStyle: {
           color: 'purple'
         },

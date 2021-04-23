@@ -1,15 +1,15 @@
 <template>
-  <common-card title="共计用户数" value="1,957,420">
+  <common-card title="共计用户数" :value="totalUsers_total">
     <template v-slot:chart>
       <div id="TotalUsersChart" :style="{width:'100%', height:'100%'}"></div>
     </template>
     <template v-slot:footer>
       <div class="totalUsersCompare">
         <span>日同比:</span>
-        <span class="emphasis">5.14%</span>
+        <span class="emphasis">{{totalUsers_dayRate}}</span>
         <div class="increase"></div>
         <span class="totalUsersCompare__month">月同比:</span>
-        <span class="emphasis">32.42%</span>
+        <span class="emphasis">{{totalUsers_monthRate}}</span>
         <div class="decrease"></div>
       </div>
     </template>
@@ -17,9 +17,11 @@
 </template>
 <script>
 import commonCardMixin from '../../../mixins/commonCardMixin'
+import commonApiMixin from '../../../mixins/commonApiMixin'
+import commonDataMixin from '../../../mixins/commonDataMixin'
 const echarts = require('echarts')
 export default {
-  mixins: [commonCardMixin],
+  mixins: [commonCardMixin, commonDataMixin, commonApiMixin],
   mounted () {
     const chartDom = echarts.init(
       document.getElementById('TotalUsersChart')

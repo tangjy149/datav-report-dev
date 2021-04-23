@@ -51,9 +51,12 @@
 </template>
 
 <script>
+import commonApiMixin from '../../../mixins/commonApiMixin'
+
 const oneDay = 3600 * 24 * 1000
 const echarts = require('echarts')
 export default {
+  mixins: [commonApiMixin],
   data () {
     return {
       activeIndex: '1',
@@ -113,61 +116,75 @@ export default {
         no: 7,
         name: '肯德基',
         money: '323,234'
-      }]
+      }],
+      chartOption: {
+      }
+
+    }
+  },
+  watch: {
+    orderFullYear () {
+      this.render(this.orderFullYear, this.orderFullYearAxis, '年度销售额')
     }
   },
   methods: {
     onMenuSelect (index) {
       this.activeIndex = index
+    },
+    render (data, axis, title) {
+      this.chartOption = {
+        title: {
+          text: title,
+          textStyle: {
+            fontSize: 15,
+            color: '#666666'
+          },
+          left: 25,
+          top: 20
+        },
+        xAxis: {
+          type: 'category',
+          // data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+          data: axis
+        },
+        yAxis: {
+          axisLine: {
+            show: false
+          },
+          axisTick: {
+            show: false
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        grid: {
+          top: 70,
+          bottom: 60,
+          left: 50,
+          right: 50,
+          tooltip: {
+            show: true
+          }
+        },
+        series: [{
+          type: 'bar',
+          barWidth: '35%',
+          // data: [200, 230, 256, 304, 234, 200, 230, 256, 304, 234, 234, 545]
+          data: data
+        }]
+
+      }
     }
   },
   mounted () {
     const chartDom = echarts.init(
       document.getElementById('TotalChangeChart')
     )
-    chartDom.setOption({
-      title: {
-        text: '年度销售额',
-        textStyle: {
-          fontSize: 15,
-          color: '#666666'
-        },
-        left: 25,
-        top: 20
-      },
-      xAxis: {
-        type: 'category',
-        data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-      },
-      yAxis: {
-        axisLine: {
-          show: false
-        },
-        axisTick: {
-          show: false
-        }
-      },
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'shadow'
-        }
-      },
-      grid: {
-        top: 70,
-        bottom: 60,
-        left: 50,
-        right: 50,
-        tooltip: {
-          show: true
-        }
-      },
-      series: [{
-        type: 'bar',
-        barWidth: '35%',
-        data: [200, 230, 256, 304, 234, 200, 230, 256, 304, 234, 234, 545]
-      }]
-    })
+    chartDom.setOption(this.chartOption)
   }
 }
 </script>
