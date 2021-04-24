@@ -12,7 +12,7 @@
             <el-menu-item class="salesView__menuWrapper__left__item" index="1">销售额</el-menu-item>
             <el-menu-item class="salesView__menuWrapper__left__item" index="2">访问量</el-menu-item>
           </el-menu>
-          <div class="salesView__menuWrapper__right">
+          <!-- <div class="salesView__menuWrapper__right">
             <el-radio-group v-model="radioSelect" size="small">
               <el-radio-button label="今日" />
               <el-radio-button label="本周" />
@@ -30,7 +30,7 @@
               :shortcuts="shortcuts"
               class="salesView__menuWrapper__right__picker"
             />
-          </div>
+          </div>-->
         </div>
       </template>
       <div class="salesView__chartWrapper">
@@ -55,6 +55,7 @@ import commonApiMixin from '../../../mixins/commonApiMixin'
 
 const oneDay = 3600 * 24 * 1000
 const echarts = require('echarts')
+
 export default {
   mixins: [commonApiMixin],
   data () {
@@ -87,44 +88,57 @@ export default {
           return [start, end]
         })()
       }],
-      rankData: [{
-        no: 1,
-        name: '肯德基',
-        money: '323,234'
-      }, {
-        no: 2,
-        name: '肯德基',
-        money: '323,234'
-      }, {
-        no: 3,
-        name: '肯德基',
-        money: '323,234'
-      },
-      {
-        no: 4,
-        name: '肯德基',
-        money: '323,234'
-      }, {
-        no: 5,
-        name: '肯德基',
-        money: '323,234'
-      }, {
-        no: 6,
-        name: '肯德基',
-        money: '323,234'
-      }, {
-        no: 7,
-        name: '肯德基',
-        money: '323,234'
-      }],
-      chartOption: {
-      }
+      // rankData: [{
+      //   no: 1,
+      //   name: '肯德基',
+      //   money: '323,234'
+      // }, {
+      //   no: 2,
+      //   name: '肯德基',
+      //   money: '323,234'
+      // }, {
+      //   no: 3,
+      //   name: '肯德基',
+      //   money: '323,234'
+      // },
+      // {
+      //   no: 4,
+      //   name: '肯德基',
+      //   money: '323,234'
+      // }, {
+      //   no: 5,
+      //   name: '肯德基',
+      //   money: '323,234'
+      // }, {
+      //   no: 6,
+      //   name: '肯德基',
+      //   money: '323,234'
+      // }, {
+      //   no: 7,
+      //   name: '肯德基',
+      //   money: '323,234'
+      // }],
+      chartOption: {}
 
+    }
+  },
+  computed: {
+    rankData () {
+      return this.activeIndex === '1' ? this.orderRank : this.userRank
     }
   },
   watch: {
     orderFullYear () {
       this.render(this.orderFullYear, this.orderFullYearAxis, '年度销售额')
+    },
+    activeIndex () {
+      if (this.activeIndex === '1') {
+        console.log(this.orderFullYear)
+        this.render(this.orderFullYear, this.orderFullYearAxis, '年度销售额')
+      } else {
+        console.log(this.userFullYear)
+        this.render(this.userFullYear, this.userFullYearAxis, '用户访问量')
+      }
     }
   },
   methods: {
@@ -176,15 +190,14 @@ export default {
           // data: [200, 230, 256, 304, 234, 200, 230, 256, 304, 234, 234, 545]
           data: data
         }]
-
       }
+      const chartDom = echarts.init(
+        document.getElementById('TotalChangeChart')
+      )
+      chartDom.setOption(this.chartOption)
     }
   },
   mounted () {
-    const chartDom = echarts.init(
-      document.getElementById('TotalChangeChart')
-    )
-    chartDom.setOption(this.chartOption)
   }
 }
 </script>

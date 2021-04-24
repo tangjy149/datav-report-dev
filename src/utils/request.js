@@ -17,4 +17,27 @@ service.interceptors.response.use(
     return Promise.reject(err)
   }
 )
+
+export const post = (url, data = {}) => {
+  // console.log(data)
+  let resData = null
+  return new Promise((resolve, reject) => {
+    service.post(url, data, {
+      transformResponse: [function (data) {
+        // 对 data 进行任意转换处理
+        // console.log(data)
+        resData = data
+        return data
+      }],
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((response) => {
+      // console.log(resData)
+      resolve(resData)
+    }, error => {
+      reject(error)
+    })
+  })
+}
 export default service

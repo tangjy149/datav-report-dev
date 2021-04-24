@@ -11,11 +11,22 @@ function wrapperArray (o, k) {
   return o && o[k] ? o[k] : []
 }
 
+function wrapperObject (o, k) {
+  if (o && k.indexOf('.' >= 0)) {
+    const keys = k.split('.')
+    keys.forEach((key) => {
+      o = o[key]
+    })
+    return o
+  } else {
+    return o && o[k] ? o[k] : {}
+  }
+}
 // function wrapperPercentage (o, k) {
 //   return o && o[k] ? `${o[k]}% ` : '0%'
 // }
 export default {
-  inject: ['getReportData'],
+  inject: ['getReportData', 'getWordCloudData'],
   computed: {
     reportData () {
       return this.getReportData()
@@ -45,6 +56,16 @@ export default {
     },
     userRank () {
       return wrapperArray(this.reportData, 'userRank')
+    },
+
+    // 搜索数据
+    wordCloudData () {
+      return this.getWordCloudData()
+    },
+
+    // 品类数据
+    category () {
+      return wrapperObject(this.reportData, 'category.data2')
     }
   }
 }

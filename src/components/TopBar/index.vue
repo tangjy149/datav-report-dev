@@ -9,8 +9,8 @@
         </div>
         <div class="topWrapper__funcBox__user">
           <div class="topWrapper__funcBox__user__icon iconfont">&#xe744;</div>
-          <div class="topWrapper__funcBox__user__name">tangjy</div>
-          <div class="topWrapper__funcBox__user__icon iconfont">&#xe745;</div>
+          <div class="topWrapper__funcBox__user__name">{{username}}</div>
+          <div class="topWrapper__funcBox__user__icon iconfont" @click="handleBackLogin">&#xe745;</div>
         </div>
       </div>
     </div>
@@ -18,8 +18,26 @@
 </template>
 
 <script>
-export default {
+import { useRouter } from 'vue-router'
+const useRouterEffect = () => {
+  const router = useRouter()
+  const handleBackLogin = () => {
+    localStorage.username = null
+    router.push({ name: 'login' })
+  }
+  return { handleBackLogin }
+}
 
+export default {
+  data () {
+    return {
+      username: localStorage.username
+    }
+  },
+  setup () {
+    const { handleBackLogin } = useRouterEffect()
+    return { handleBackLogin }
+  }
 }
 </script>
 

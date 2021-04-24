@@ -9,12 +9,12 @@
           <div class="bottomView__view__baseBox__chartWrapper">
             <div class="chart">
               <div class="chart__title">搜索用户数</div>
-              <div class="chart__data">94,234</div>
+              <div class="chart__data">{{userCount}}</div>
               <div id="SreachUsersChart" style="height:.5rem;" />
             </div>
             <div class="chart">
               <div class="chart__title">搜索量趋势</div>
-              <div class="chart__data">198,234</div>
+              <div class="chart__data">{{searchCount}}</div>
               <div id="SreachNumberChart" style="height:.5rem;" />
             </div>
           </div>
@@ -24,8 +24,9 @@
               <el-table-column prop="keyword" label="keyword" width="160px"></el-table-column>
               <el-table-column prop="count" label="count"></el-table-column>
               <el-table-column prop="users" label="users"></el-table-column>
+              <el-table-column prop="range" label="range"></el-table-column>
             </el-table>
-            <el-pagination :total="100" :page-size="5" @current-change="onPageChange"></el-pagination>
+            <el-pagination :total="totalNum" :page-size="pageSize" @current-change="onPageChange"></el-pagination>
           </div>
         </div>
       </el-card>
@@ -52,8 +53,12 @@
 </template>
 
 <script>
+import commonApiMixin from '../../../mixins/commonApiMixin'
+import commonDataMixin from '../../../mixins/commonDataMixin'
+import { toRaw } from 'vue'
 const echarts = require('echarts')
 export default {
+  mixins: [commonApiMixin, commonDataMixin],
   data () {
     return {
       tableData: [{
@@ -77,88 +82,190 @@ export default {
       }, {
         name: '汉堡披萨',
         value: 92
-      }]
+      }],
+      searchUserOption: {
+        xAxis: {
+          type: 'category'
+        },
+        yAxis: {
+          show: false
+        },
+        grid: {
+          top: 0,
+          bottom: 0,
+          left: -20,
+          right: 20
+        },
+        series: [{
+          type: 'line',
+          areaStyle: {
+            color: 'rgba(88,187,255,.5)'
+          },
+          itemStyle: {
+            opacity: 0
+          },
+          smooth: true,
+          data: [200, 230, 256, 304, 234, 200, 230, 256, 304, 234, 234, 545]
+        }]
+      },
+      searchNumberOption: {
+        xAxis: {
+          type: 'category'
+        },
+        yAxis: {
+          show: false
+        },
+        grid: {
+          top: 0,
+          bottom: 0,
+          left: -20,
+          right: 20
+        },
+        series: [{
+          type: 'line',
+          areaStyle: {
+            color: 'rgba(88,187,255,.5)'
+          },
+          itemStyle: {
+            opacity: 0
+          },
+          smooth: true,
+          data: [200, 230, 256, 304, 234, 200, 230, 256, 304, 234, 234, 545]
+        }]
+      },
+      categoryOption: {
+        title: [{
+          text: '品牌分布',
+          textStyle: {
+            fontSize: 14,
+            color: '#666666'
+          },
+          left: 20,
+          top: 20
+        }],
+        tooltip: {
+          trigger: 'item',
+          formatter: '{b}: {c} ({d}%)'
+        },
+        legend: {
+          top: '5%',
+          left: 'right',
+          orient: 'vertical'
+        },
+        series: [{
+          type: 'pie',
+          data: this.mockData,
+          radius: ['50%', '70%'],
+          avoidLabelOverlap: false,
+          label: {
+            show: false,
+            position: 'center'
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: '40',
+              fontWeight: 'bold'
+            }
+          },
+          labelLine: {
+            show: false
+          }
+        }]
+      },
+      totalData: [],
+      totalNum: 0,
+      pageSize: 5,
+      userCount: 0,
+      searchCount: 0
     }
   },
   methods: {
     onPageChange (page) {
-      console.log(page)
+      this.renderTable(page)
+    },
+    // 设置表格内部的值
+    renderTable (page) {
+      const pageStart = (page - 1) * this.pageSize
+      const pageEnd = (page - 1) * this.pageSize + this.pageSize
+      this.tableData = this.totalData.slice(pageStart, pageEnd)
+    },
+    renderLineChart () {
+      // 设置趋势图
+      const userData = []
+      const numberData = []
+      this.wordCloudData.forEach(item => {
+        userData.push(item.user)
+      })
+      this.wordCloudData.forEach(item => {
+        numberData.push(item.count)
+      })
+      // console.log(userData)
+      this.searchUserOption.series[0].data = userData
+      this.searchNumberOption.series[0].data = numberData
     }
   },
   mounted () {
-    const chartDom = echarts.init(
-      document.getElementById('SreachUsersChart')
-    )
-    chartDom.setOption({
-      xAxis: {
-        type: 'category'
-      },
-      yAxis: {
-        show: false
-      },
-      grid: {
-        top: 0,
-        bottom: 0,
-        left: -10,
-        right: 0
-      },
-      series: [{
-        type: 'line',
-        areaStyle: {
-          color: 'rgba(88,187,255,.5)'
-        },
-        itemStyle: {
-          opacity: 0
-        },
-        smooth: true,
-        data: [200, 230, 256, 304, 234, 200, 230, 256, 304, 234, 234, 545]
-      }]
-    })
-
     // 环形图参数
-    const pieDom = echarts.init(document.getElementById('CategoryChart'))
-    pieDom.setOption({
-      title: [{
-        text: '品牌分布',
-        textStyle: {
-          fontSize: 14,
-          color: '#666666'
-        },
-        left: 20,
-        top: 20
-      }],
-      tooltip: {
-        trigger: 'item',
-        formatter: '{b}: {c} ({d}%)'
-      },
-      legend: {
-        top: '5%',
-        left: 'right',
-        orient: 'vertical'
-      },
-      series: [{
-        type: 'pie',
-        data: this.mockData,
-        radius: ['50%', '70%'],
-        avoidLabelOverlap: false,
-        label: {
-          show: false,
-          position: 'center'
-        },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: '40',
-            fontWeight: 'bold'
-          }
-        },
-        labelLine: {
-          show: false
-        }
-      }]
-    })
+
+  },
+  watch: {
+    wordCloudData () {
+      // console.log(this.wordCloudData)
+      const totalData = []
+      this.wordCloudData.forEach((item, index) => {
+        totalData.push({
+          id: index + 1,
+          rank: index + 1,
+          keyword: item.word,
+          count: item.count,
+          users: item.user,
+          range: `${((item.user / item.count) * 100).toFixed(2)}%`
+        })
+      })
+      this.totalData = totalData
+      this.totalNum = this.totalData.length
+      // console.log(this.totalData)
+      this.renderTable(1)
+
+      // 用户和销售趋势&总数
+      this.userCount = this.exFormat(totalData.reduce((s, i) => i.users + s, 0))
+      this.searchCount = this.exFormat(totalData.reduce((s, i) => i.count + s, 0))
+      // 趋势绘制
+      this.renderLineChart()
+      const chartDomUser = echarts.init(
+        document.getElementById('SreachUsersChart')
+      )
+      chartDomUser.setOption(this.searchUserOption)
+      const chartDomNum = echarts.init(
+        document.getElementById('SreachNumberChart')
+      )
+      chartDomNum.setOption(this.searchNumberOption)
+    },
+    brandData () {
+      // console.log(this.brandData)
+      this.categoryOption.series[0].data = toRaw(this.brandData)
+      const pieDom = echarts.init(document.getElementById('CategoryChart'))
+      pieDom.setOption(this.categoryOption)
+    },
+    productData () {
+      // this.categoryOption.series[0].data = toRaw(this.brandData)
+      console.log(this.productData)
+    },
+    radioSelect () {
+      if (this.radioSelect === '类别') {
+        this.categoryOption.series[0].data = toRaw(this.brandData)
+        this.categoryOption.title[0].text = '品牌分布'
+      } else {
+        this.categoryOption.series[0].data = toRaw(this.productData)
+        this.categoryOption.title[0].text = '产品分布'
+      }
+      const pieDom = echarts.init(document.getElementById('CategoryChart'))
+      pieDom.setOption(this.categoryOption)
+    }
   }
 }
+
 </script>
 
 <style lang="scss" scoped>

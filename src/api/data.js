@@ -20,3 +20,17 @@ export function todayUsers () {
     method: 'get'
   })
 }
+
+export function brandData () {
+  return request({
+    url: '/api/dataReport/getBrandChart',
+    method: 'get'
+  })
+}
+
+export function productData () {
+  return request({
+    url: '/api/dataReport/getProductChart',
+    method: 'get'
+  })
+}

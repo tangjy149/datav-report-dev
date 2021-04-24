@@ -12,8 +12,8 @@ import TopView from '../components/report/TopView'
 import SalesView from '../components/report/SalesView'
 import BottomView from '../components/report/BottomView'
 import TopBar from '../components/TopBar'
-import { dataReport, totalOrders, todayUsers } from '../api/data'
-import { screenData } from '../api/report'
+import { dataReport, totalOrders, todayUsers, brandData, productData } from '../api/data'
+import { screenData, wordCloud } from '../api/report'
 export default {
   name: 'Home',
   components: {
@@ -25,7 +25,10 @@ export default {
       totalUsers: null,
       totalOrders: null,
       todayUsers: null,
-      reportData: null
+      reportData: null,
+      wordCloudData: null,
+      brandData: null,
+      productData: null
     }
   },
   methods: {
@@ -43,6 +46,15 @@ export default {
     },
     getReportData () {
       return this.reportData
+    },
+    getWordCloudData () {
+      return this.wordCloudData
+    },
+    getBrandData () {
+      return this.brandData
+    },
+    getProductData () {
+      return this.productData
     }
 
   },
@@ -52,7 +64,10 @@ export default {
       getTotalUsers: this.getTotalUsers,
       getTotalOrders: this.getTotalOrders,
       getTodayUsers: this.getTodayUsers,
-      getReportData: this.getReportData
+      getReportData: this.getReportData,
+      getWordCloudData: this.getWordCloudData,
+      getBrandData: this.getBrandData,
+      getProductData: this.getProductData
     }
   },
   mounted () {
@@ -60,10 +75,13 @@ export default {
     dataReport().then(data => { this.totalUsers = data[1] })
     totalOrders().then(data => { this.totalOrders = data[0] })
     todayUsers().then(data => { this.todayUsers = data[0] })
-
+    brandData().then(data => { this.brandData = data })
+    productData().then(data => { this.productData = data })
     // api接入
     screenData().then(data => { this.reportData = data })
-
+    wordCloud().then(data => {
+      this.wordCloudData = data
+    })
     // console.log(this.reportData)
   }
 }

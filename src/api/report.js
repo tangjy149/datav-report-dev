@@ -8,3 +8,12 @@ export function screenData () {
 
   })
 }
+
+export function wordCloud () {
+  return request({
+    url: '/screen/wordcloud',
+    method: 'get',
+    params: { icode: 'D3BD6BAF2CAE2DC6' }
+
+  })
+}

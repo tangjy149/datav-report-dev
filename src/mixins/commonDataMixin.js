@@ -15,7 +15,7 @@ function wrapperPercentage (o, k) {
   return o && o[k] ? `${o[k]}% ` : '0%'
 }
 export default {
-  inject: ['getTotalData', 'getTotalUsers', 'getTotalOrders', 'getTodayUsers'],
+  inject: ['getTotalData', 'getTotalUsers', 'getTotalOrders', 'getTodayUsers', 'getBrandData', 'getProductData'],
   computed: {
     // 累计销售
     totalData () {
@@ -71,7 +71,20 @@ export default {
     },
     todayUsers_backRate () {
       return wrapperPercentage(this.todayUsers, 'backRate')
+    },
+
+    // 品牌数据
+    brandData () {
+      return this.getBrandData()
+    },
+    productData () {
+      return this.getProductData()
     }
 
+  },
+  methods: {
+    exFormat (v) {
+      return format(v)
+    }
   }
 }
