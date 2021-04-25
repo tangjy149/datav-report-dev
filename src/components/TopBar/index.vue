@@ -5,7 +5,11 @@
       <div class="topWrapper__funcBox">
         <div class="topWrapper__funcBox__buttons">
           <el-button type="text" class="topWrapper__funcBox__buttons__item">数据报表</el-button>
-          <el-button type="text" class="topWrapper__funcBox__buttons__item">数据大屏</el-button>
+          <el-button
+            type="text"
+            class="topWrapper__funcBox__buttons__item"
+            @click="handleDataV"
+          >数据大屏</el-button>
         </div>
         <div class="topWrapper__funcBox__user">
           <div class="topWrapper__funcBox__user__icon iconfont">&#xe744;</div>
@@ -25,7 +29,10 @@ const useRouterEffect = () => {
     localStorage.username = null
     router.push({ name: 'login' })
   }
-  return { handleBackLogin }
+  const handleDataV = () => {
+    window.location.href = 'http://localhost:8081'
+  }
+  return { handleBackLogin, handleDataV }
 }
 
 export default {
@@ -35,8 +42,8 @@ export default {
     }
   },
   setup () {
-    const { handleBackLogin } = useRouterEffect()
-    return { handleBackLogin }
+    const { handleBackLogin, handleDataV } = useRouterEffect()
+    return { handleBackLogin, handleDataV }
   }
 }
 </script>

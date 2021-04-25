@@ -13,74 +13,90 @@
           v-model="password"
         />
       </div>
-      <div class="wrapper__login-button" @click="handleLogin">登录</div>
-      <div class="wrapper__login-link" @click="handleRegisterClick">立即注册</div>
+      <div class="wrapper__input">
+        <input
+          class="warpper__input__content"
+          placeholder="请再输入一遍密码"
+          type="password"
+          v-model="checkpass"
+        />
+      </div>
+      <div class="wrapper__register-button" @click="handleRegister">注册</div>
+      <div class="wrapper__register-link" @click="handleLoginClick">立即登录</div>
       <Toast v-if="showToast" :message="toastMessage" />
     </el-card>
   </div>
 </template>
-
 <script>
 import { reactive, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 import { post } from '../utils/request'
 import Toast, { useToastEffect } from '../components/Toast'
-const useLoginEffect = (changeToast) => {
+// 处理注册逻辑
+const useRegisterEffect = (changeToast) => {
   const router = useRouter()
-  let isEmpty = true
   const data = reactive({
     username: '',
-    password: ''
+    password: '',
+    checkpass: ''
   })
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     try {
-      if (data.username !== '' && data.password !== '') {
-        isEmpty = false
-      }
-      const result = await post('/api/dataReport/login', {
-        username: data.username,
-        password: data.password
-      })
-      // console.log(result)
-      const str = JSON.parse(result)
-      console.log(str.username)
-      localStorage.username = str.username
-      if (result && !isEmpty) {
-        console.log(result.username)
-        localStorage.isLogin = true
-        router.push({ name: 'Home' })
+      if (data.password === data.checkpass) {
+        const result = await post('/api/dataReport/register', {
+          username: data.username,
+          password: data.password
+        })
+        const str = JSON.parse(result)
+        console.log(str)
+        if (str.errno === 0 && str.message === 'success') {
+          localStorage.isLogin = true
+          router.push({ name: 'login' })
+        } else if (str.message === 'exsit') {
+          changeToast('用户名已存在')
+        } else {
+          changeToast('注册失败')
+        }
       } else {
-        changeToast('登录失败')
+        changeToast('密码不相同')
       }
     } catch (e) {
       changeToast('请求失败')
     }
   }
-  const { username, password } = toRefs(data)
-  return { username, password, handleLogin }
+  const { username, password, checkpass } = toRefs(data)
+  return { username, password, checkpass, handleRegister }
 }
-const useRegisterEffect = () => {
+
+const useLoginEffect = () => {
   const router = useRouter()
-  const handleRegisterClick = () => {
-    router.push({ name: 'register' })
+  const handleLoginClick = () => {
+    router.push({ name: 'login' })
   }
-  return { handleRegisterClick }
+  return { handleLoginClick }
 }
+
 export default {
-  name: 'Login',
+  name: 'Register',
   components: { Toast },
   setup () {
-    // setup是用于告知，代码执行的大致逻辑
     const { showToast, toastMessage, changeToast } = useToastEffect()
-    const { username, password, handleLogin } = useLoginEffect(changeToast)
-    const { handleRegisterClick } = useRegisterEffect()
-    return { handleLogin, handleRegisterClick, username, password, showToast, toastMessage }
+    const { username, password, checkpass, handleRegister } = useRegisterEffect(changeToast)
+    const { handleLoginClick } = useLoginEffect()
+    return {
+      handleLoginClick,
+      username,
+      password,
+      checkpass,
+      handleRegister,
+      showToast,
+      toastMessage
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-@import "../style/viribles.scss";
 .wrapper {
   width: 35%;
   margin: 0rem auto 0rem auto;
@@ -91,7 +107,6 @@ export default {
     height: 0.66rem;
     margin: 0 auto 0.4rem auto;
     font-size: 0.7rem;
-    color: black;
   }
   &__input {
     height: 0.48rem;
@@ -112,19 +127,19 @@ export default {
       }
     }
   }
-  &__login-button {
+  &__register-button {
     height: 0.48rem;
     margin: 0.32rem 0.4rem 0.16rem 0.4rem;
     padding: 0 0.16rem;
     background-color: black;
-    box-shadow: 0 0.04rem 0.08rem 0 rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0.04rem 0.08rem 0 black;
     border-radius: 0.04rem;
     color: #ffffff;
     font-size: 0.16rem;
     text-align: center;
     line-height: 0.48rem;
   }
-  &__login-link {
+  &__register-link {
     text-align: center;
     font-size: 0.14rem;
     color: rgba(0, 0, 0, 0.5);

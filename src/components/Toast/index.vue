@@ -14,7 +14,7 @@ export const useToastEffect = () => {
   })
   const changeToast = (message) => {
     toastData.showToast = true
-    toastData.toastMessage = '登陆失败'
+    toastData.toastMessage = message
     setTimeout(() => {
       toastData.showToast = false
       toastData.toastMessage = ''
