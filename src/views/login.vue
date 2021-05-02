@@ -41,12 +41,12 @@ const useLoginEffect = (changeToast) => {
         username: data.username,
         password: data.password
       })
-      // console.log(result)
+      console.log(result)
       const str = JSON.parse(result)
       console.log(str.username)
-      localStorage.username = str.username
-      if (result && !isEmpty) {
-        console.log(result.username)
+      console.log(str.errno)
+      if (str.errno === 0 && !isEmpty) {
+        localStorage.username = str.message
         localStorage.isLogin = true
         router.push({ name: 'Home' })
       } else {

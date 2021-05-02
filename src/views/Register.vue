@@ -42,23 +42,27 @@ const useRegisterEffect = (changeToast) => {
   })
   const handleRegister = async () => {
     try {
-      if (data.password === data.checkpass) {
-        const result = await post('/api/dataReport/register', {
-          username: data.username,
-          password: data.password
-        })
-        const str = JSON.parse(result)
-        console.log(str)
-        if (str.errno === 0 && str.message === 'success') {
-          localStorage.isLogin = true
-          router.push({ name: 'login' })
-        } else if (str.message === 'exsit') {
-          changeToast('用户名已存在')
-        } else {
-          changeToast('注册失败')
-        }
+      if (data.username === '' || data.password === '' || data.checkpass === '') {
+        changeToast('用户名或密码为空')
       } else {
-        changeToast('密码不相同')
+        if (data.password === data.checkpass) {
+          const result = await post('/api/dataReport/register', {
+            username: data.username,
+            password: data.password
+          })
+          const str = JSON.parse(result)
+          console.log(str)
+          if (str.errno === 0 && str.message === 'success') {
+            localStorage.isLogin = true
+            router.push({ name: 'login' })
+          } else if (str.message === 'exsit') {
+            changeToast('用户名已存在')
+          } else {
+            changeToast('注册失败')
+          }
+        } else {
+          changeToast('密码不相同')
+        }
       }
     } catch (e) {
       changeToast('请求失败')
